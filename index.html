@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IoT Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    .dashboard {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .card {
+      padding: 20px;
+      background-color: #eee;
+      margin: 10px 0;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .card h2 {
+      margin: 0;
+      font-size: 2rem;
+    }
+    .status {
+      font-size: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <h1>IoT Sensor Dashboard</h1>
+    <div class="card">
+      <h2>Temperature</h2>
+      <div id="temperature" class="status">Loading...</div>
+    </div>
+    <div class="card">
+      <h2>Humidity</h2>
+      <div id="humidity" class="status">Loading...</div>
+    </div>
+  </div>
+
+  <script>
+    // Fungsi untuk mengambil data sensor dari API
+    function fetchSensorData() {
+      fetch('http://localhost:4000/api/sensorData')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Data not available');
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Sensor Data:', data); // Debugging log
+
+          // Memperbarui UI dengan data yang diambil
+          document.getElementById('temperature').textContent = `${data.temperature} °C`;
+          document.getElementById('humidity').textContent = `${data.humidity} %`;
+        })
+        .catch(error => {
+          console.error('Error fetching sensor data:', error);
+          document.getElementById('temperature').textContent = 'Error loading data';
+          document.getElementById('humidity').textContent = 'Error loading data';
+        });
+    }
+
+    // Ambil data setiap 2 detik dan juga ambil data segera setelah halaman dimuat
+    setInterval(fetchSensorData, 2000); // Ambil data setiap 2 detik
+    fetchSensorData(); // Ambil data pertama kali pada saat halaman dimuat
+  </script>
+</body>
+</html>
